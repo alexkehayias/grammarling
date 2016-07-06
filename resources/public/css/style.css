@@ -1,0 +1,62 @@
+/* some style */
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.Wrap {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.Aligner {
+    display: flex;
+    display: -webkit-flex;
+}
+
+.Aligner-grid {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.Aligner-grid.six {
+    min-width: 50%;
+}
+
+.Aligner-grid.three {
+    min-width: 25%;
+}
+
+.Aligner-grid.four {
+    min-width: 33.33333%;
+}
+
+.Aligner-grid.nine {
+    min-width: 66.66666%;
+}
+
+.Aligner-grid.twelve {
+    min-width: 100%;
+}
+
+#input, #rules, #preview, #styles {
+    padding: 20px;
+}
+
+#input, #rules, #styles {
+    width: 100%;
+    height: auto;
+    font-family: 'Monaco', 'courier', 'sans-serif';
+    font-size: 16px;
+    border: 0;
+    border-right: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+#preview {
+    font-family: 'Cambria', 'Helvetica', 'sans-serif';
+    font-size: 18px;
+}
