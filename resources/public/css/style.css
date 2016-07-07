@@ -3,6 +3,7 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: 'Helvetica', 'Arial', 'sans-serif';
 }
 
 .Wrap {
@@ -14,6 +15,21 @@ body {
 .Aligner {
     display: flex;
     display: -webkit-flex;
+}
+
+.Aligner--center {
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.Aligner--center-item {
+    max-width: 50%;
 }
 
 .Aligner-grid {
