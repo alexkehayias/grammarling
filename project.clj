@@ -17,14 +17,13 @@
   :plugins [[lein-figwheel "0.5.4-3"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
-  :source-paths ["src"]
+  :source-paths ["src/clj" "src/cljs"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src"]
-
+                :source-paths ["src/clj" "src/cljs"]
                 ;; the presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
@@ -44,7 +43,7 @@
                ;; production. You can build this with:
                ;; lein cljsbuild once min
                {:id "min"
-                :source-paths ["src"]
+                :source-paths ["src/clj" "src/cljs"]
                 :compiler {:output-to "resources/public/js/compiled/grammarling.js"
                            :main grammarling.core
                            :optimizations :advanced
@@ -95,7 +94,7 @@
                                    :exclude [org.clojure/clojurescript]]
                                   [org.clojure/tools.nrepl "0.2.12"]]
                    ;; need to add dev source path here to get user.clj loaded
-                   :source-paths ["src" "dev"]
+                   :source-paths ["src/clj" "src/cljs" "dev"]
                    ;; for CIDER
                    ;; :plugins [[cider/cider-nrepl "0.12.0"]]
                    :repl-options { ; for nREPL dev you really need to limit output

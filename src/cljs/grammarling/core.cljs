@@ -4,7 +4,8 @@
             [reagent.core :as r]
             [cljsjs.codemirror]
             [cljsjs.codemirror.mode.css]
-            [cljsjs.codemirror.mode.ebnf]))
+            [cljsjs.codemirror.mode.ebnf])
+  (:require-macros [grammarling.config :refer [cljs-env]]))
 
 (enable-console-print!)
 
@@ -156,7 +157,25 @@
 
 (defn ^:export run [init]
   (r/render [main (reset! state init)]
-            (js/document.getElementById "app")))
+            (js/document.getElementById "app"))
+  ;; WARNING: this is gross interop
+  ;; Append google analytics depending on the env
+  (when (= (cljs-env :environment) "prod")
+    (when-not (.getElementById js/document "analytics")
+      (.appendChild
+       js/document.body
+       (doto (.createElement js/document "script")
+         (aset "id" "analytics")
+         (aset "innerHTML"
+               (str "
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '" (cljs-env :google-analytics-id) "', 'auto');
+  ga('send', 'pageview');
+")))))))
 
 (def init-text
   "#+title Grammar playground
