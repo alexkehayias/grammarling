@@ -75,4 +75,23 @@ body {
 #preview {
     font-family: 'Cambria', 'Helvetica', 'sans-serif';
     font-size: 18px;
+    overflow: auto;
+}
+
+#share {
+    whitespace: nowrap;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    padding: 20px;
+ }
+
+#share h3 {
+    padding: 0;
+    margin: 0;
+}
+
+#share pre {
+    display: inline-block;
 }

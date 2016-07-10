@@ -5,7 +5,8 @@
             [cljsjs.codemirror]
             [cljsjs.codemirror.mode.css]
             [cljsjs.codemirror.mode.ebnf])
-  (:require-macros [grammarling.config :refer [cljs-env]]))
+  (:require-macros [grammarling.config :refer [cljs-env]])
+  (:import goog.Uri))
 
 (enable-console-print!)
 
@@ -24,8 +25,8 @@
   (swap! state assoc :text (.getValue event))
   nil)
 
-(defn update-rules [event]
-  (swap! state assoc :rules (.getValue event))
+(defn update-grammar [event]
+  (swap! state assoc :grammar (.getValue event))
   nil)
 
 (defn update-css
@@ -84,6 +85,32 @@
     :else
     (throw "Invalid parse-tree")))
 
+
+(defn get-query-param
+  "Gets query params from a url with optional default value"
+  ([url key]
+   (get-query-param url nil))
+  ([url key default]
+   (or (.getParameterValue (Uri.parse url) key)
+       default)))
+
+(defn share-url
+  "Returns the current state of the app as a url"
+  [state url]
+  (let [{:keys [text grammar css]} state
+        uri-obj (Uri.parse url)]
+    (.toString
+     (doto uri-obj
+       (.setParameterValue "text" text)
+       (.setParameterValue "grammar" grammar)
+       (.setParameterValue "css" css)))))
+
+(defn link-to-share []
+  [:div#share
+   [:span "♡ "]
+   [:a {:href (share-url @state js/window.location.href)}
+    "share this grammar"]])
+
 (def parser-memo
   (memoize insta/parser))
 
@@ -91,31 +118,33 @@
   [:div#preview
    {:class "Aligner-grid three"}
    [:div {:style {:height "100%" :overflow "auto"}}
-    (let [{:keys [text rules]} @state
-          parse-tree (insta/parse (parser-memo rules)
+    (let [{:keys [text grammar]} @state
+          parse-tree (insta/parse (parser-memo grammar)
                                   (or text ""))]
       ;; If this is a parsing error it does not throw, it returns
       ;; an object so log it and return nil
       (if (instance? instaparse.gll.Failure parse-tree)
         (do (println parse-tree) nil)
-        (react-transform parse-tree)))]])
+        (react-transform parse-tree)))]
+   [:div {:style {:clear "both"}}]
+   [link-to-share]])
 
-(defn rules-input []
+(defn grammar-input []
   (r/create-class
    {:component-did-mount (fn [& args]
                            (let [obj (.fromTextArea
                                       js/CodeMirror
-                                      (.getElementById js/document "rules")
+                                      (.getElementById js/document "grammar")
                                       #js {"lineNumbers" true
                                            "lineWrapping" true
                                            "theme" "monokai"
                                            "mode" "ebnf"})]
-                             (.on obj "change" update-rules)))
+                             (.on obj "change" update-grammar)))
     :reagent-render (fn []
-                      [:textarea#rules
+                      [:textarea#grammar
                        {:class "Aligner-grid three"
                         :style {:font-size "16px"}
-                        :defaultValue (-> state deref :rules)}])}))
+                        :defaultValue (-> state deref :grammar)}])}))
 
 (defn text-input []
   (r/create-class
@@ -150,7 +179,7 @@
   [:div {:class "Wrap"}
    [:div {:class "Aligner" :style {:height "100%" :width "100%"}}
     [text-input]
-    [rules-input]
+    [grammar-input]
     [css-input]
     [preview-render]
     [:style {:id "parse-styles"} (:css init-state)]]])
@@ -195,7 +224,7 @@ Content within heading is nested to the headline
 ** TODO Tasks can be captured by matching \"TODO\" or \"DONE\"
 ** DONE Tasks are denoted by \"DONE\"")
 
-(def init-rules
+(def init-grammar
   "<DOC> = preamble heading*
 preamble = [title] [author]
 title = <'#+title'> text EOL
@@ -282,8 +311,9 @@ status = todo | done")
 (defn on-js-reload []
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
-  (run (or @state {:text init-text
-                   :rules init-rules
-                   :css init-css})))
+  (let [url js/window.location.href]
+    (run (or @state {:text (get-query-param url "text" init-text)
+                     :grammar (get-query-param url "grammar" init-grammar)
+                     :css (get-query-param url "css" init-css)}))))
 
 (set! (.-onload js/window) on-js-reload)
