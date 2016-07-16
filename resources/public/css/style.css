@@ -95,3 +95,18 @@ body {
 #share pre {
     display: inline-block;
 }
+
+@media (max-width: 1200px) {
+    .Wrap {
+        position: relative;
+    }
+    .Aligner {
+        display: block;
+    }
+    .Aligner-item {
+        min-width: 100%;
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+}

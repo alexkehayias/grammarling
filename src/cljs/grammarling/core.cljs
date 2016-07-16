@@ -121,6 +121,9 @@
     (let [{:keys [text grammar]} @state
           parse-tree (insta/parse (parser-memo grammar)
                                   (or text ""))]
+      ;; (when (> (count parse-tree) 1)
+      ;;   (println "Ambiguous grammar", (count parse-tree)))
+
       ;; If this is a parsing error it does not throw, it returns
       ;; an object so log it and return nil
       (if (instance? instaparse.gll.Failure parse-tree)

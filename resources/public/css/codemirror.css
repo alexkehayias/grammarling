@@ -10,6 +10,13 @@
   border-right: 1px solid #1A1A1A;
 }
 
+@media (max-width: 1200px) {
+    .CodeMirror {
+        border-bottom: 2px solid #1c1c1c;
+        padding-bottom: 20px;
+    }
+}
+
 /* PADDING */
 
 .CodeMirror-lines {
