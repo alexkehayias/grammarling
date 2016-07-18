@@ -2,6 +2,8 @@
 
 An interactive EBNF grammar renderer in ClojureScript using Instaparse and Reagent.
 
+![Alt text](/../screenshots/screenshot.png?raw=true "Grammarling EBNF parser to HTML and CSS screenshot")
+
 ## Setup
 
 To get an interactive development environment run:
